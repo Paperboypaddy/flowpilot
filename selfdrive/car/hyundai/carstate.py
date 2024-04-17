@@ -93,7 +93,7 @@ class CarState(CarStateBase):
     ret.vEgoCluster = self.cluster_speed * speed_conv
     ret.engineRpm = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"]
 
-    ret.steeringAngleDeg = cp.vl["SAS11"]["SAS_Angle"] + 2.0 # kona ev steering offset
+    ret.steeringAngleDeg = cp.vl["SAS11"]["SAS_Angle"] #+ 2.0 # kona ev steering offset
     ret.steeringRateDeg = cp.vl["SAS11"]["SAS_Speed"]
     ret.yawRate = cp.vl["ESP12"]["YAW_RATE"]
     ret.leftBlinker, ret.rightBlinker = self.update_blinker_from_lamp(
@@ -317,7 +317,7 @@ class CarState(CarStateBase):
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
-      ("CLU15", 5),
+      # ("CLU15", 5),
       ("ESP12", 100),
       ("CGW1", 10),
       ("CGW2", 5),
@@ -363,35 +363,35 @@ class CarState(CarStateBase):
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
 
-  @staticmethod
-  def get_cam_can_parser(CP):
-    if CP.carFingerprint in CANFD_CAR:
-      return CarState.get_cam_can_parser_canfd(CP)
+  # @staticmethod
+  # def get_cam_can_parser(CP):
+  #   if CP.carFingerprint in CANFD_CAR:
+  #     return CarState.get_cam_can_parser_canfd(CP)
 
-    signals = [
-      # signal_name, signal_address
-      ("CF_Lkas_LdwsActivemode", "LKAS11"),
-      ("CF_Lkas_LdwsSysState", "LKAS11"),
-      ("CF_Lkas_SysWarning", "LKAS11"),
-      ("CF_Lkas_LdwsLHWarning", "LKAS11"),
-      ("CF_Lkas_LdwsRHWarning", "LKAS11"),
-      ("CF_Lkas_HbaLamp", "LKAS11"),
-      ("CF_Lkas_FcwBasReq", "LKAS11"),
-      ("CF_Lkas_HbaSysState", "LKAS11"),
-      ("CF_Lkas_FcwOpt", "LKAS11"),
-      ("CF_Lkas_HbaOpt", "LKAS11"),
-      ("CF_Lkas_FcwSysState", "LKAS11"),
-      ("CF_Lkas_FcwCollisionWarning", "LKAS11"),
-      ("CF_Lkas_MsgCount", "LKAS11"),
-      ("CF_Lkas_FusionState", "LKAS11"),
-      ("CF_Lkas_FcwOpt_USM", "LKAS11"),
-      ("CF_Lkas_LdwsOpt_USM", "LKAS11"),
-    ]
-    checks = [
-      ("LKAS11", 100)
-    ]
+  #   signals = [
+  #     # signal_name, signal_address
+  #     ("CF_Lkas_LdwsActivemode", "LKAS11"),
+  #     ("CF_Lkas_LdwsSysState", "LKAS11"),
+  #     ("CF_Lkas_SysWarning", "LKAS11"),
+  #     ("CF_Lkas_LdwsLHWarning", "LKAS11"),
+  #     ("CF_Lkas_LdwsRHWarning", "LKAS11"),
+  #     ("CF_Lkas_HbaLamp", "LKAS11"),
+  #     ("CF_Lkas_FcwBasReq", "LKAS11"),
+  #     ("CF_Lkas_HbaSysState", "LKAS11"),
+  #     ("CF_Lkas_FcwOpt", "LKAS11"),
+  #     ("CF_Lkas_HbaOpt", "LKAS11"),
+  #     ("CF_Lkas_FcwSysState", "LKAS11"),
+  #     ("CF_Lkas_FcwCollisionWarning", "LKAS11"),
+  #     ("CF_Lkas_MsgCount", "LKAS11"),
+  #     ("CF_Lkas_FusionState", "LKAS11"),
+  #     ("CF_Lkas_FcwOpt_USM", "LKAS11"),
+  #     ("CF_Lkas_LdwsOpt_USM", "LKAS11"),
+  #   ]
+  #   checks = [
+  #     ("LKAS11", 100)
+  #   ]
 
-    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
+  #   return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
 
   @staticmethod
   def get_can_parser_canfd(CP):
