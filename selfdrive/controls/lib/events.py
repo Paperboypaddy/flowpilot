@@ -919,11 +919,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # and the rest of the car is separated. When messages from the LKAS camera
   # are received on the car side this usually means the relay hasn't opened correctly
   # and this alert is thrown.
-  EventName.relayMalfunction: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Harness Relay Malfunction"),
-    ET.PERMANENT: NormalPermanentAlert("Harness Relay Malfunction", "Check Hardware"),
-    ET.NO_ENTRY: NoEntryAlert("Harness Relay Malfunction"),
-  },
+  # EventName.relayMalfunction: {
+  #   ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Harness Relay Malfunction"),
+  #   ET.PERMANENT: NormalPermanentAlert("Harness Relay Malfunction", "Check Hardware"),
+  #   ET.NO_ENTRY: NoEntryAlert("Harness Relay Malfunction"),
+  # },
 
   EventName.speedTooLow: {
     ET.IMMEDIATE_DISABLE: Alert(

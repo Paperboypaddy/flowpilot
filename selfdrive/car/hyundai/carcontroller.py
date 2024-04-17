@@ -154,15 +154,15 @@ class CarController:
     if lat_active and steering_amount >= MAX_ANGLE and CS.out.steeringPressed:
       lat_active = False
 
-    if self.frame == 0: # initialize counts from last received count signals
-      self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
-    self.lkas11_cnt %= 0x10
+    # if self.frame == 0: # initialize counts from last received count signals
+    #   self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
+    # self.lkas11_cnt %= 0x10
 
     if self.angle_limit_counter >= MAX_ANGLE_FRAMES + MAX_ANGLE_CONSECUTIVE_FRAMES:
       self.angle_limit_counter = 0
 
     can_sends.append(hyundaican.create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lat_active,
-                                              torque_fault, CS.lkas11, sys_warning, sys_state, CC.enabled,
+                                              torque_fault, sys_warning, sys_state, CC.enabled,
                                               hud_control.leftLaneVisible, hud_control.rightLaneVisible,
                                               left_lane_warning, right_lane_warning))
 
