@@ -157,7 +157,7 @@ class CarState(CarStateBase):
       ret.cruiseState.nonAdaptive = 0 <= seconds_from_cancel < 7.0
 
     # save the entire LKAS11 and CLU11
-    self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
+    # self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
     self.clu11 = copy.copy(cp.vl["CLU11"])
     self.mdps12 = copy.copy(cp.vl["MDPS12"])
     self.elect = copy.copy(cp.vl["ELECT_GEAR"])
@@ -317,7 +317,7 @@ class CarState(CarStateBase):
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
-      # ("CLU15", 5),
+      ("CLU15", 5),
       ("ESP12", 100),
       ("CGW1", 10),
       ("CGW2", 5),
