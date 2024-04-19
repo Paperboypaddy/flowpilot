@@ -71,14 +71,14 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   left_lane, right_lane,
                   left_lane_depart, right_lane_depart):
   values = {
-    "CF_Lkas_LdwsSysState": sys_state
-    "CF_Lkas_SysWarning": 3 if sys_warning else 0
-    "CF_Lkas_LdwsLHWarning": left_lane_depart
-    "CF_Lkas_LdwsRHWarning": right_lane_depart
-    "CR_Lkas_StrToqReq": apply_steer
-    "CF_Lkas_ActToi": steer_req
-    "CF_Lkas_ToiFlt": torque_fault  # seems to allow actuation on CR_Lkas_StrToqReq
-    "CF_Lkas_MsgCount": frame % 0x10
+    "CF_Lkas_LdwsSysState": sys_state,
+    "CF_Lkas_SysWarning": 3 if sys_warning else 0,
+    "CF_Lkas_LdwsLHWarning": left_lane_depart,
+    "CF_Lkas_LdwsRHWarning": right_lane_depart,
+    "CR_Lkas_StrToqReq": apply_steer,
+    "CF_Lkas_ActToi": steer_req,
+    "CF_Lkas_ToiFlt": torque_fault,  # seems to allow actuation on CR_Lkas_StrToqReq
+    "CF_Lkas_MsgCount": frame % 0x10,
   }
 
   # SysWarning 4 = keep hands on wheel + beep
