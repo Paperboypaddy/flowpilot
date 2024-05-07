@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 import time
 from panda import Panda
 
@@ -10,26 +9,41 @@ class Buttons:
     GAP_DIST = 3
     CANCEL = 4
 
-def modify_cruise_control_state(panda, can_id, can_data):
-    # Modify the cruise control button state to RES_ACCEL
-    can_data["CF_Clu_CruiseSwState"] = Buttons.RES_ACCEL
-    # Pack and send the modified message back to the CAN bus
-    panda.can_send(can_id, panda.can_pack(can_data), 0)
-
-def capture_and_modify_messages():
-    panda = Panda(serial='44003d000c51363338383037')
+def main():
+    panda = Panda()
     panda.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
-    canbus = int(os.getenv("CAN", "0"))  # Default to CAN bus 0
+    
+    send_can_id = 0x4F1  # CAN ID to send messages
+    send_can_data = b"\x00\x00\x00\x00\x00\x00\x00\x00"  # Dummy data set to all zeros
+    send_can_bus = 0  # Sending CAN bus index
+    receive_can_bus = 0  # Receiving CAN bus index
+    last_send_time = time.time()
+    sending_enabled = False  # Variable to control whether messages are sent
 
     while True:
+        # Check for user input to toggle sending or exit
+        if sending_enabled:
+            current_time = time.time()
+            # Send a dummy message every second on bus 0
+            if current_time - last_send_time >= 1.0:
+                panda.can_send(send_can_id, send_can_data, send_can_bus)
+                print(f"Sent message {send_can_data.hex()} on CAN ID {hex(send_can_id)} to bus {send_can_bus}")
+                last_send_time = current_time
+
+        # Check for new messages on bus 1 and modify them
         messages = panda.can_recv()
         for address, _, data, src in messages:
-            if src == canbus and address == 0x4F1:  # Assuming 0x4F1 is the CAN ID for CLU11
-                can_data = panda.can_unpack(data)
-                if "CF_Clu_CruiseSwState" in can_data:
-                    modify_cruise_control_state(panda, address, can_data)
+            if src == receive_can_bus and address == send_can_id:
+                print(f"Received message {data.hex()} on CAN ID {hex(address)} from bus {src}")
+                # Simulate unpacking and modifying CAN data
+                can_data = list(data)  # Convert bytes to list of integers for manipulation
+                can_data[0] = Buttons.RES_ACCEL  # Modify the button state directly in the data list
+                modified_data = bytes(can_data)  # Convert list back to bytes
+                panda.can_send(address, modified_data, receive_can_bus)
+                print(f"Modified and sent message {modified_data.hex()} on CAN ID {hex(address)} to bus {receive_can_bus}")
 
-        time.sleep(0.01)  # Sleep to prevent excessive CPU usage
+        # Brief sleep to prevent overwhelming the CPU
+        time.sleep(0.01)
 
 if __name__ == "__main__":
-    capture_and_modify_messages()
+    main()
