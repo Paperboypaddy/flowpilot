@@ -17,7 +17,7 @@ def modify_cruise_control_state(panda, can_id, can_data):
     panda.can_send(can_id, panda.can_pack(can_data), 0)
 
 def capture_and_modify_messages():
-    panda = Panda()
+    panda = Panda(serial='44003d000c51363338383037')
     panda.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
     canbus = int(os.getenv("CAN", "0"))  # Default to CAN bus 0
 

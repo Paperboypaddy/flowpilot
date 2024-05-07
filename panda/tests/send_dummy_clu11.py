@@ -3,9 +3,9 @@ import time
 from panda import Panda
 
 def send_and_receive_messages():
-    panda = Panda()
+    panda = Panda(serial='3e003c000c51363338383037')
     panda.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
-    send_can_id = 0x1AB  # Example CAN ID to send messages
+    send_can_id = 0x4F1  # Example CAN ID to send messages
     send_can_data = b"\x00\x00\x00\x00\x00\x00\x00\x00"  # Dummy data set to all zeros
     send_can_bus = 0  # Sending CAN bus index
     receive_can_bus = 1  # Receiving CAN bus index
