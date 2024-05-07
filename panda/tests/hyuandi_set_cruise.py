@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
 import time
+import random
 from panda import Panda
 
 class Buttons:
@@ -9,12 +9,19 @@ class Buttons:
     GAP_DIST = 3
     CANCEL = 4
 
+def modify_second_digit(hex_data):
+    # Extract the first byte
+    first_byte = hex_data[:1]
+    # Modify the second digit to 1
+    modified_hex_data = first_byte + '1' + hex_data[2:]
+    
+    return modified_hex_data
+
 def main():
     panda = Panda()
     panda.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
     
     send_can_id = 0x4F1  # CAN ID to send messages
-    send_can_data = b"\x00\x00\x00\x00\x00\x00\x00\x00"  # Dummy data set to all zeros
     send_can_bus = 0  # Sending CAN bus index
     receive_can_bus = 0  # Receiving CAN bus index
     last_send_time = time.time()
@@ -24,6 +31,8 @@ def main():
         # Check for user input to toggle sending or exit
         if sending_enabled:
             current_time = time.time()
+            # Generate random data for each send
+            send_can_data = bytes([random.randint(0, 255) for _ in range(4)])
             # Send a dummy message every second on bus 0
             if current_time - last_send_time >= 1.0:
                 panda.can_send(send_can_id, send_can_data, send_can_bus)
@@ -35,10 +44,9 @@ def main():
         for address, _, data, src in messages:
             if src == receive_can_bus and address == send_can_id:
                 print(f"Received message {data.hex()} on CAN ID {hex(address)} from bus {src}")
-                # Simulate unpacking and modifying CAN data
-                can_data = list(data)  # Convert bytes to list of integers for manipulation
-                can_data[0] = Buttons.RES_ACCEL  # Modify the button state directly in the data list
-                modified_data = bytes(can_data)  # Convert list back to bytes
+                # Modify the second digit of the data
+                modified_data_hex = modify_second_digit(data.hex())
+                modified_data = bytes.fromhex(modified_data_hex)
                 panda.can_send(address, modified_data, receive_can_bus)
                 print(f"Modified and sent message {modified_data.hex()} on CAN ID {hex(address)} to bus {receive_can_bus}")
 
