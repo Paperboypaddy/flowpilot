@@ -43,6 +43,8 @@ public class SettingsScreen extends ScreenAdapter {
     Dialog dialog;
     public java.util.List<String> AdditionalToggles = new java.util.ArrayList<>();
     public java.util.List<TextButton> ToggleButtons = new ArrayList<>();
+    public java.util.List<String> AdditionalVehicles = new java.util.ArrayList<>();
+    public java.util.List<TextButton> VehicleButtons = new ArrayList<>();
 
     public void addKeyValueTable(Table table, String key, String value, boolean addLine) {
         table.add(new Label(key, appContext.skin, "default-font", "white")).left().pad(30);
@@ -106,6 +108,13 @@ public class SettingsScreen extends ScreenAdapter {
         }
     }
 
+    public void fillVehicleSettings(){
+        currentSettingTable.clear();
+        for (int i=0; i<VehicleButtons.size(); i++) {
+            addKeyValueTable(currentSettingTable, AdditionalVehicles.get(i*2), VehicleButtons.get(i), true);
+        }
+    }
+
     public SettingsScreen(FlowUI appContext) {
         this.appContext = appContext;
 
@@ -120,6 +129,8 @@ public class SettingsScreen extends ScreenAdapter {
         AdditionalToggles.add("SensitiveSlow");
         AdditionalToggles.add("Always Use Model Path");
         AdditionalToggles.add("UseModelPath");
+        AdditionalVehicles.add("HKG Cruise Spamming");
+        AdditionalVehicles.add("CruiseSpamming");
 
         stage = new Stage(new FitViewport(1280, 720));
         batch = new SpriteBatch();
@@ -176,6 +187,16 @@ public class SettingsScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 fillToggleSettings();
+            }
+        });
+        settingTable.add(buttonToggle).pad(10).align(Align.right);
+        settingTable.row();
+
+        buttonToggle = getPaddedButton("Vehicle", appContext.skin, "no-bg-bold", 5);
+        buttonToggle.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fillVehicleSettings();
             }
         });
         settingTable.add(buttonToggle).pad(10).align(Align.right);
@@ -287,6 +308,19 @@ public class SettingsScreen extends ScreenAdapter {
                 }
             });
             ToggleButtons.add(nb);
+        }
+
+        for (int i=0; i<AdditionalVehicles.size(); i+=2) {
+            TextButton nb = new TextButton("  ", appContext.skin, "toggle");
+            nb.setChecked(params.exists(AdditionalVehicles.get(i + 1)) && params.getBool(AdditionalVehicles.get(i + 1)));
+            int finalI = i;
+            nb.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    params.putBool(AdditionalVehicles.get(finalI + 1), nb.isChecked());
+                }
+            });
+            VehicleButtons.add(nb);
         }
 
         fillDeviceSettings();
