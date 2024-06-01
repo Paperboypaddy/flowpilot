@@ -100,6 +100,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"PlanExpiresAt", PERSISTENT},
     {"PlanValid", PERSISTENT},
     {"DeviceRegId", PERSISTENT},
+    {"CruiseSpamming", PERSISTENT},
 };
 
 lmdb::env Params::env = nullptr;
