@@ -423,6 +423,8 @@ class CarController:
       if CS.out.cruiseState.nonAdaptive and self.temp_disable_spamming <= 0 and allow_reenable_cruise:
         can_sends.append(hyundaican.create_cpress(self.packer, CS.clu11, Buttons.SET_DECEL)) # re-enable cruise at our current speed
         self.temp_disable_spamming = 5 # take a break
+    else:
+      sLogger.Send("0all set")
 
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.params.STEER_MAX

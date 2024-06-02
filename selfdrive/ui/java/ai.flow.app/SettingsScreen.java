@@ -33,7 +33,7 @@ public class SettingsScreen extends ScreenAdapter {
     Stage stage;
     TextButton buttonDevice, buttonCalibrate, buttonWideCalibrate, buttonCalibrateExtrinsic,
             buttonTraining, buttonPowerOff, buttonReboot, buttonSoftware,
-            buttonUninstall, buttonToggle, buttonCheckUpdate, buttonLogOut;
+            buttonUninstall, buttonToggle, buttonVehicle, buttonCheckUpdate, buttonLogOut;
     ImageButton closeButton;
 
     SpriteBatch batch;
@@ -192,14 +192,14 @@ public class SettingsScreen extends ScreenAdapter {
         settingTable.add(buttonToggle).pad(10).align(Align.right);
         settingTable.row();
 
-        buttonToggle = getPaddedButton("Vehicle", appContext.skin, "no-bg-bold", 5);
-        buttonToggle.addListener(new ClickListener() {
+        buttonVehicle = getPaddedButton("Vehicle", appContext.skin, "no-bg-bold", 5);
+        buttonVehicle.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 fillVehicleSettings();
             }
         });
-        settingTable.add(buttonToggle).pad(10).align(Align.right);
+        settingTable.add(buttonVehicle).pad(10).align(Align.right);
         settingTable.row();
 
         buttonCalibrate = getPaddedButton("RESET", appContext.skin, 5);
