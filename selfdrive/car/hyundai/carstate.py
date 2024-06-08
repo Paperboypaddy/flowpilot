@@ -40,6 +40,7 @@ class CarState(CarStateBase):
     self.openPilotEnabled = False
 
     self.mdps_bus = 1
+    self.sas_bus = 1
 
     self.is_metric = False
     self.buttons_counter = 0
@@ -306,19 +307,9 @@ class CarState(CarStateBase):
       #("REGEN_LEVEL" ,"VCU_202"),
 
       ("Cruise_Limit_Target", "E_EMS11"),
-
-      ("CR_Mdps_StrColTq", "MDPS12"),
-      ("CF_Mdps_ToiActive", "MDPS12"),
-      ("CF_Mdps_ToiUnavail", "MDPS12"),
-      ("CF_Mdps_ToiFlt", "MDPS12"),
-      ("CR_Mdps_OutTq", "MDPS12"),
-
-      ("SAS_Angle", "SAS11"),
-      ("SAS_Speed", "SAS11"),
     ]
     checks = [
       # address, frequency
-      ("MDPS12", 50),
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
@@ -328,10 +319,9 @@ class CarState(CarStateBase):
       ("CGW2", 5),
       ("CGW4", 5),
       ("WHL_SPD11", 50),
-      ("SAS11", 100),
     ]
 
-    if CP.mdpsBus == 0:
+    if self.mdps_bus == 0:
       signals += [
         ("CR_Mdps_StrColTq", "MDPS12", 0),
         ("CF_Mdps_Def", "MDPS12", 0),
@@ -351,6 +341,14 @@ class CarState(CarStateBase):
         ("MDPS11", 100),
       ]
 
+    if self.sas_bus == 0:
+      signals += [
+        ("SAS_Angle", "SAS11"),
+        ("SAS_Speed", "SAS11"),
+      ]
+      checks += [
+        ("SAS11", 100)
+      ]
     if CP.enableBsm:
       signals += [
         ("CF_Lca_IndLeft", "LCA11"),
@@ -415,7 +413,7 @@ class CarState(CarStateBase):
         checks += [
           ("LKAS11", 100)
         ]
-      if CP.mdpsBus == 1:
+      if self.mdps_bus == 1:
         signals += [
           ("CR_Mdps_StrColTq", "MDPS12", 0),
           ("CF_Mdps_Def", "MDPS12", 0),
@@ -433,6 +431,14 @@ class CarState(CarStateBase):
         checks += [
           ("MDPS12", 50),
           ("MDPS11", 100),
+        ]
+      if self.sas_bus == 1:
+        signals += [
+          ("SAS_Angle", "SAS11"),
+          ("SAS_Speed", "SAS11"),
+        ]
+        checks += [
+          ("SAS11", 100)
         ]
 
       return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
