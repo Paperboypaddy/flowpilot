@@ -89,7 +89,7 @@ class CarController:
     self.car_fingerprint = CP.carFingerprint
     self.last_button_frame = 0
     self.lkas11_cnt = 0
-    self.mdpsBus = 0
+    self.mdpsBus = 1
     self.prevent_heavy_steer_timer = 0
 
     self.speed_ratios =  [0.0, 1.0,  1.05,  1.1,  1.15,  1.2,  1.25,  1.3]
@@ -154,6 +154,11 @@ class CarController:
     if lat_active and steering_amount >= MAX_ANGLE and CS.out.steeringPressed:
       lat_active = False
 
+    clu11_speed = CS.clu11["CF_Clu_Vanz"]
+    enabled_speed = 38 if CS.clu11["CF_Clu_SPEED_UNIT"] == 1 else 60
+    if clu11_speed > enabled_speed or not lkas_active:
+      enabled_speed = clu11_speed
+
     if not self.Options.get_bool("HKGNoLKAS"):
       if self.frame == 0: # initialize counts from last received count signals
         self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
@@ -166,12 +171,25 @@ class CarController:
       can_sends.append(hyundaican.create_lkas11_no_lkas_eq(self.packer, self.frame, self.car_fingerprint, apply_steer, lat_active,
                                               torque_fault, sys_warning, sys_state, CC.enabled,
                                               hud_control.leftLaneVisible, hud_control.rightLaneVisible,
-                                              left_lane_warning, right_lane_warning))
+                                              left_lane_warning, right_lane_warning, 0))
+      if CS.mdps_bus == 1:
+        can_sends.append(hyundaican.create_lkas11_no_lkas_eq(self.packer, self.frame, self.car_fingerprint, apply_steer, lat_active,
+                                              torque_fault, sys_warning, sys_state, CC.enabled,
+                                              hud_control.leftLaneVisible, hud_control.rightLaneVisible,
+                                              left_lane_warning, right_lane_warning, 1))
     else:
       can_sends.append(hyundaican.create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lat_active,
                                                 torque_fault, CS.lkas11, sys_warning, sys_state, CC.enabled,
                                                 hud_control.leftLaneVisible, hud_control.rightLaneVisible,
-                                                left_lane_warning, right_lane_warning))
+                                                left_lane_warning, right_lane_warning, 0))
+      if CS.mdps_bus == 1:
+        can_sends.append(hyundaican.create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lat_active,
+                                                torque_fault, CS.lkas11, sys_warning, sys_state, CC.enabled,
+                                                hud_control.leftLaneVisible, hud_control.rightLaneVisible,
+                                                left_lane_warning, right_lane_warning, 1))
+
+    if frame % 2 and CS.mdps_bus: # send clu11 to mdps if it is not on bus 0
+      can_sends.append(create_clu11(self.packer, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
     
 
     # 20 Hz LFA MFA message

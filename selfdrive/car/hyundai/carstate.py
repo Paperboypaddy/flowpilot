@@ -39,6 +39,8 @@ class CarState(CarStateBase):
 
     self.openPilotEnabled = False
 
+    self.mdps_bus = 1
+
     self.is_metric = False
     self.buttons_counter = 0
 
@@ -329,6 +331,26 @@ class CarState(CarStateBase):
       ("SAS11", 100),
     ]
 
+    if CP.mdpsBus == 0:
+      signals += [
+        ("CR_Mdps_StrColTq", "MDPS12", 0),
+        ("CF_Mdps_Def", "MDPS12", 0),
+        ("CF_Mdps_ToiActive", "MDPS12", 0),
+        ("CF_Mdps_ToiUnavail", "MDPS12", 0),
+        ("CF_Mdps_ToiFlt", "MDPS12", 0),
+        ("CF_Mdps_MsgCount2", "MDPS12", 0),
+        ("CF_Mdps_Chksum2", "MDPS12", 0),
+        ("CF_Mdps_SErr", "MDPS12", 0),
+        ("CR_Mdps_StrTq", "MDPS12", 0),
+        ("CF_Mdps_FailStat", "MDPS12", 0),
+        ("CR_Mdps_OutTq", "MDPS12", 0),
+        ("CR_Mdps_DrvTq", "MDPS11", 0),
+      ]
+      checks += [
+        ("MDPS12", 50),
+        ("MDPS11", 100),
+      ]
+
     if CP.enableBsm:
       signals += [
         ("CF_Lca_IndLeft", "LCA11"),
@@ -366,34 +388,52 @@ class CarState(CarStateBase):
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
 
-  if not Params().get_bool("HKGNoLKAS"):
     @staticmethod
     def get_cam_can_parser(CP):
       if CP.carFingerprint in CANFD_CAR:
         return CarState.get_cam_can_parser_canfd(CP)
-
-      signals = [
-        # signal_name, signal_address
-        ("CF_Lkas_LdwsActivemode", "LKAS11"),
-        ("CF_Lkas_LdwsSysState", "LKAS11"),
-        ("CF_Lkas_SysWarning", "LKAS11"),
-        ("CF_Lkas_LdwsLHWarning", "LKAS11"),
-        ("CF_Lkas_LdwsRHWarning", "LKAS11"),
-        ("CF_Lkas_HbaLamp", "LKAS11"),
-        ("CF_Lkas_FcwBasReq", "LKAS11"),
-        ("CF_Lkas_HbaSysState", "LKAS11"),
-        ("CF_Lkas_FcwOpt", "LKAS11"),
-        ("CF_Lkas_HbaOpt", "LKAS11"),
-        ("CF_Lkas_FcwSysState", "LKAS11"),
-        ("CF_Lkas_FcwCollisionWarning", "LKAS11"),
-        ("CF_Lkas_MsgCount", "LKAS11"),
-        ("CF_Lkas_FusionState", "LKAS11"),
-        ("CF_Lkas_FcwOpt_USM", "LKAS11"),
-        ("CF_Lkas_LdwsOpt_USM", "LKAS11"),
-      ]
-      checks = [
-        ("LKAS11", 100)
-      ]
+      if not Params().get_bool("HKGNoLKAS"):
+        signals += [
+          # signal_name, signal_address
+          ("CF_Lkas_LdwsActivemode", "LKAS11"),
+          ("CF_Lkas_LdwsSysState", "LKAS11"),
+          ("CF_Lkas_SysWarning", "LKAS11"),
+          ("CF_Lkas_LdwsLHWarning", "LKAS11"),
+          ("CF_Lkas_LdwsRHWarning", "LKAS11"),
+          ("CF_Lkas_HbaLamp", "LKAS11"),
+          ("CF_Lkas_FcwBasReq", "LKAS11"),
+          ("CF_Lkas_HbaSysState", "LKAS11"),
+          ("CF_Lkas_FcwOpt", "LKAS11"),
+          ("CF_Lkas_HbaOpt", "LKAS11"),
+          ("CF_Lkas_FcwSysState", "LKAS11"),
+          ("CF_Lkas_FcwCollisionWarning", "LKAS11"),
+          ("CF_Lkas_MsgCount", "LKAS11"),
+          ("CF_Lkas_FusionState", "LKAS11"),
+          ("CF_Lkas_FcwOpt_USM", "LKAS11"),
+          ("CF_Lkas_LdwsOpt_USM", "LKAS11"),
+        ]
+        checks += [
+          ("LKAS11", 100)
+        ]
+      if CP.mdpsBus == 1:
+        signals += [
+          ("CR_Mdps_StrColTq", "MDPS12", 0),
+          ("CF_Mdps_Def", "MDPS12", 0),
+          ("CF_Mdps_ToiActive", "MDPS12", 0),
+          ("CF_Mdps_ToiUnavail", "MDPS12", 0),
+          ("CF_Mdps_ToiFlt", "MDPS12", 0),
+          ("CF_Mdps_MsgCount2", "MDPS12", 0),
+          ("CF_Mdps_Chksum2", "MDPS12", 0),
+          ("CF_Mdps_SErr", "MDPS12", 0),
+          ("CR_Mdps_StrTq", "MDPS12", 0),
+          ("CF_Mdps_FailStat", "MDPS12", 0),
+          ("CR_Mdps_OutTq", "MDPS12", 0),
+          ("CR_Mdps_DrvTq", "MDPS11", 0),
+        ]
+        checks += [
+          ("MDPS12", 50),
+          ("MDPS11", 100),
+        ]
 
       return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
 

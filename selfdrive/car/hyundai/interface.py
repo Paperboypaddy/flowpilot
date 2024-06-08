@@ -318,7 +318,7 @@ class CarInterface(CarInterfaceBase):
       self.low_speed_alert = True
     if ret.vEgo > (self.CP.minSteerSpeed):
       self.low_speed_alert = False
-    if self.low_speed_alert:
+    if self.low_speed_alert and not self.CS.mdps_bus:
       events.add(car.CarEvent.EventName.belowSteerSpeed)
 
     ret.events = events.to_msg()

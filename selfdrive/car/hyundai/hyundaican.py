@@ -69,7 +69,7 @@ def create_opkr_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
 def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   torque_fault, lkas11, sys_warning, sys_state, enabled,
                   left_lane, right_lane,
-                  left_lane_depart, right_lane_depart):
+                  left_lane_depart, right_lane_depart, bus):
   values = lkas11
   values["CF_Lkas_LdwsSysState"] = sys_state
   values["CF_Lkas_SysWarning"] = 3 if sys_warning else 0
@@ -109,12 +109,12 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
 
   values["CF_Lkas_Chksum"] = checksum
 
-  return packer.make_can_msg("LKAS11", 0, values)
+  return packer.make_can_msg("LKAS11", bus, values)
 
 def create_lkas11_no_lkas_eq(packer, frame, car_fingerprint, apply_steer, steer_req,
                   torque_fault, sys_warning, sys_state, enabled,
                   left_lane, right_lane,
-                  left_lane_depart, right_lane_depart):
+                  left_lane_depart, right_lane_depart, bus):
   values = {
     "CF_Lkas_LdwsSysState": sys_state,
     "CF_Lkas_SysWarning": 3 if sys_warning else 0,
@@ -140,7 +140,7 @@ def create_lkas11_no_lkas_eq(packer, frame, car_fingerprint, apply_steer, steer_
   values["CF_Lkas_LdwsActivemode"] = 0
   values["CF_Lkas_FcwOpt_USM"] = 0
 
-  dat = packer.make_can_msg("LKAS11", 0, values)[2]
+  dat = packer.make_can_msg("LKAS11", bus, values)[2]
 
   if car_fingerprint in CHECKSUM["crc8"]:
     # CRC Checksum as seen on 2019 Hyundai Santa Fe
@@ -158,11 +158,12 @@ def create_lkas11_no_lkas_eq(packer, frame, car_fingerprint, apply_steer, steer_
   return packer.make_can_msg("LKAS11", 0, values)
 
 
-def create_clu11(packer, frame, clu11, button):
-  values = clu11
+def create_clu11(packer, bus, clu11, button, speed):
+  values = copy.copy(clu11)
   values["CF_Clu_CruiseSwState"] = button
-  values["CF_Clu_AliveCnt1"] = frame % 0x10
-  return packer.make_can_msg("CLU11", 0, values)
+  values["CF_Clu_Vanz"] = speed
+  values["CF_Clu_AliveCnt1"] = (values["CF_Clu_AliveCnt1"] + 1) % 0x10
+  return packer.make_can_msg("CLU11", bus, values)
 
 def create_mdps12(packer, frame, mdps12):
   values = mdps12
