@@ -174,6 +174,7 @@ static int default_fwd_hook(int bus_num, int addr to_fwd) {
     HKG_MDPS12_cnt += 1;
     HKG_MDPS12_cnt %= 345;
   }
+  
   return bus_fwd;
 }
 
