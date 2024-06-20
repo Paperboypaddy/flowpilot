@@ -326,7 +326,7 @@ class CarState(CarStateBase):
       ("WHL_SPD11", 50),
     ]
 
-    if self.mdps_bus == 0:
+    if CP.mdpsBus == 0:
       signals += [
         ("CR_Mdps_StrColTq", "MDPS12", 0),
         ("CF_Mdps_Def", "MDPS12", 0),
@@ -346,7 +346,7 @@ class CarState(CarStateBase):
         ("MDPS11", 100),
       ]
 
-    if self.sas_bus == 0:
+    if CP.sasBus == 0:
       signals += [
         ("SAS_Angle", "SAS11"),
         ("SAS_Speed", "SAS11"),
@@ -418,7 +418,7 @@ class CarState(CarStateBase):
         checks += [
           ("LKAS11", 100)
         ]
-      if self.mdps_bus == 1:
+      if CP.mdpsBus == 1:
         signals += [
           ("CR_Mdps_StrColTq", "MDPS12", 0),
           ("CF_Mdps_Def", "MDPS12", 0),
@@ -437,7 +437,7 @@ class CarState(CarStateBase):
           ("MDPS12", 50),
           ("MDPS11", 100),
         ]
-      if self.sas_bus == 1:
+      if CP.sasBus == 1:
         signals += [
           ("SAS_Angle", "SAS11"),
           ("SAS_Speed", "SAS11"),
