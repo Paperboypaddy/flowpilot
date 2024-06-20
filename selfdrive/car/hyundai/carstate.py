@@ -39,8 +39,13 @@ class CarState(CarStateBase):
 
     self.openPilotEnabled = False
 
-    self.mdps_bus = 1
-    self.sas_bus = 1
+    self.no_radar = CP.sccBus == -1
+    self.mdps_bus = CP.mdpsBus
+    self.sas_bus = CP.sasBus
+    self.scc_bus = CP.sccBus
+    self.has_scc13 = CP.hasScc13 or CP.carFingerprint in FEATURES["has_scc13"]
+    self.has_scc14 = CP.hasScc14 or CP.carFingerprint in FEATURES["has_scc14"]
+    self.has_lfa_hda = CP.hasLfaHda
 
     self.is_metric = False
     self.buttons_counter = 0

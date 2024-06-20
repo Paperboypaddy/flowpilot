@@ -501,6 +501,20 @@ struct CarParams {
     safetyParamDEPRECATED @1 :Int16;
     safetyParam2DEPRECATED @2 :UInt32;
   }
+  
+  mdpsBus @66: Int8;
+  sasBus @67: Int8;
+  sccBus @68: Int8;
+  enableAutoHold @69 :Bool;
+  hasScc13 @70 :Bool;
+  hasScc14 @71 :Bool;
+  hasEms @72 :Bool;
+  spasEnabled @73: Bool;
+  rspaEnabled @78: Bool;
+  emsType @74: Int8;
+  steerLockout @75: Bool;
+  radarDisable @76: Bool;
+  hasLfaHda @77 :Bool;
 
   struct LateralParams {
     torqueBP @0 :List(Int32);

@@ -261,9 +261,10 @@ class CarInterface(CarInterfaceBase):
 
     # *** feature detection ***
     if candidate in CANFD_CAR:
-      ret.enableBsm = 0x1e5 in fingerprint[CAN.ECAN]
+      ret.enableBsm = 0x1e5 in fingerprint[0]
     else:
-      ret.enableBsm = 0x58b in fingerprint[0]
+          ret.enableBsm = 0x58b in fingerprint[0]
+          ret.enableAutoHold = 1151 in fingerprint[0]
 
     # *** panda safety config ***
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity, 0)]
@@ -282,6 +283,25 @@ class CarInterface(CarInterfaceBase):
 
     ret.centerToFront = ret.wheelbase * 0.4
 
+
+    # ignore CAN2 address if L-CAN on the same BUS
+    ret.mdpsBus = 1 if 593 in fingerprint[1] and 1296 not in fingerprint[1] else 0
+    ret.sasBus = 1 if 688 in fingerprint[1] and 1296 not in fingerprint[1] else 0
+    ret.sccBus = 0 if 1056 in fingerprint[0] else 1 if 1056 in fingerprint[1] and 1296 not in fingerprint[1] \
+                                                                     else 2 if 1056 in fingerprint[2] else -1
+
+    if ret.sccBus >= 0:
+      ret.hasScc13 = 1290 in fingerprint[ret.sccBus]
+      ret.hasScc14 = 905 in fingerprint[ret.sccBus]
+
+    ret.hasEms = 608 in fingerprint[0] and 809 in fingerprint[0]
+    ret.hasLfaHda = 1157 in fingerprint[0]
+
+    ret.radarOffCan = ret.sccBus == -1
+    ret.pcmCruise = not ret.radarOffCan or not ret.radarDisable
+
+    if ret.radarDisable or ret.openpilotLongitudinalControl and ret.radarOffCan:
+      ret.safetyConfigs[0].safetyParam |= Panda.FLAG_HYUNDAI_LONG
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
     # mass and CG position, so all cars will have approximately similar dyn behaviors
     ret.tireStiffnessFront, ret.tireStiffnessRear = scale_tire_stiffness(ret.mass, ret.wheelbase, ret.centerToFront,
