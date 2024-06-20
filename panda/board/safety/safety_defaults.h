@@ -74,11 +74,11 @@ int default_rx_hook(CANPacket_t *to_push) {
 
 // *** no output safety mode ***
 
-static const addr_checks* nooutput_init(int16_t param) {
+static const addr_checks* nooutput_init(uint16_t param) {
   UNUSED(param);
   controls_allowed = false;
   relay_malfunction_reset();
-  if (HKG_forward_obd) {
+  if (current_board->has_obd && HKG_forward_obd) {
     current_board->set_can_mode(CAN_MODE_OBD_CAN2);
     print("setting can mode obd\n");
   }
@@ -97,7 +97,7 @@ static int nooutput_tx_lin_hook(int lin_num, uint8_t *data, int len) {
   return false;
 }
 
-static int default_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
+static int default_fwd_hook(int bus_num, int addr *to_fwd) {
   int addr = GET_ADDR(to_fwd);
   int bus_fwd = -1;
 
@@ -190,12 +190,12 @@ const safety_hooks nooutput_hooks = {
 const uint16_t ALLOUTPUT_PARAM_PASSTHROUGH = 1;
 bool alloutput_passthrough = false;
 
-static const addr_checks* alloutput_init(int16_t param) {
+static const addr_checks* alloutput_init(uint16_t param) {
   UNUSED(param);
   alloutput_passthrough = GET_FLAG(param, ALLOUTPUT_PARAM_PASSTHROUGH);
   controls_allowed = true;
   relay_malfunction_reset();
-  if (HKG_forward_obd) {
+  if (current_board->has_obd && HKG_forward_obd) {
     current_board->set_can_mode(CAN_MODE_OBD_CAN2);
     print("  setting can mode obd\n");
   }
