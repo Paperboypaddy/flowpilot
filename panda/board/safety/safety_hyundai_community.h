@@ -63,7 +63,7 @@ static int hyundai_community_rx_hook(CANPacket_t *to_push) {
                             hyundai_get_counter);
 
   if (!valid){
-    puts("  CAN RX invalid: "); puth(addr); puts("\n");
+    print("  CAN RX invalid: "); puth(addr); print("\n");
   }
   if (bus == 1 && HKG_LCAN_on_bus1) {valid = false;}
   // check if we have a LCAN on Bus1
@@ -72,31 +72,31 @@ static int hyundai_community_rx_hook(CANPacket_t *to_push) {
     if (HKG_forward_bus1 || !HKG_LCAN_on_bus1) {
       HKG_LCAN_on_bus1 = true;
       HKG_forward_bus1 = false;
-      puts("  LCAN on bus1: forwarding disabled\n");
+      print("  LCAN on bus1: forwarding disabled\n");
     }
   }
   // check if LKAS on Bus0
   if (addr == 832) {
-    if (bus == 0 && HKG_forward_bus2) {HKG_forward_bus2 = false; HKG_LKAS_bus0_cnt = 20; puts("  LKAS on bus0: forwarding disabled\n");}
+    if (bus == 0 && HKG_forward_bus2) {HKG_forward_bus2 = false; HKG_LKAS_bus0_cnt = 20; print("  LKAS on bus0: forwarding disabled\n");}
     if (bus == 2) {
-      if (HKG_LKAS_bus0_cnt > 0) {HKG_LKAS_bus0_cnt--;} else if (!HKG_forward_bus2) {HKG_forward_bus2 = true; puts("  LKAS on bus2 & not on bus0: forwarding enabled\n");}
-      if (HKG_Lcan_bus1_cnt > 0) {HKG_Lcan_bus1_cnt--;} else if (HKG_LCAN_on_bus1) {HKG_LCAN_on_bus1 = false; puts("  Lcan not on bus1\n");}
+      if (HKG_LKAS_bus0_cnt > 0) {HKG_LKAS_bus0_cnt--;} else if (!HKG_forward_bus2) {HKG_forward_bus2 = true; print("  LKAS on bus2 & not on bus0: forwarding enabled\n");}
+      if (HKG_Lcan_bus1_cnt > 0) {HKG_Lcan_bus1_cnt--;} else if (HKG_LCAN_on_bus1) {HKG_LCAN_on_bus1 = false; print("  Lcan not on bus1\n");}
     }
   }
   // check MDPS on Bus
   if ((addr == 593 || addr == 897) && HKG_mdps_bus != bus) {
     if (bus != 1 || (!HKG_LCAN_on_bus1 || HKG_forward_obd)) {
       HKG_mdps_bus = bus;
-      if (bus == 1 && !HKG_forward_obd) { puts("  MDPS on bus1\n"); if (!HKG_forward_bus1 && !HKG_LCAN_on_bus1) {HKG_forward_bus1 = true; puts("  bus1 forwarding enabled\n");}}
-      else if (bus == 1) {puts("  MDPS on obd bus\n");}
+      if (bus == 1 && !HKG_forward_obd) { print("  MDPS on bus1\n"); if (!HKG_forward_bus1 && !HKG_LCAN_on_bus1) {HKG_forward_bus1 = true; print("  bus1 forwarding enabled\n");}}
+      else if (bus == 1) {print("  MDPS on obd bus\n");}
     }
   }
   // check SCC on Bus
   if ((addr == 1056 || addr == 1057) && HKG_scc_bus != bus) {
     if (bus != 1 || !HKG_LCAN_on_bus1) {
       HKG_scc_bus = bus;
-      if (bus == 1) { puts("  SCC on bus1\n"); if (!HKG_forward_bus1) {HKG_forward_bus1 = true;puts("  bus1 forwarding enabled\n");}}
-      if (bus == 2) { puts("  SCC bus = bus2\n");}
+      if (bus == 1) { print("  SCC on bus1\n"); if (!HKG_forward_bus1) {HKG_forward_bus1 = true;print("  bus1 forwarding enabled\n");}}
+      if (bus == 2) { print("  SCC bus = bus2\n");}
     }
   }
 
@@ -109,17 +109,17 @@ static int hyundai_community_rx_hook(CANPacket_t *to_push) {
 
     if (addr == 897 && bus == HKG_mdps_bus) { // Read MDPS11, CR_Mdps_DrvTq : Driver Torque
       driver_torque = (((GET_BYTE(to_push, 2) & 0x7F) << 5) | (GET_BYTE(to_push, 1) & 0x78)) - 2048;
-      //puts("   Driver Torque   "); puth(driver_torque); puts("\n");
+      //print("   Driver Torque   "); puth(driver_torque); print("\n");
     } 
       if (addr == 1056 && !OP_SCC_live && !radar_disable) { // for cars without long control
         // 2 bits: 13-14
         int cruise_engaged = GET_BYTES_04(to_push) & 0x1; // ACC main_on signal
         if (cruise_engaged && !cruise_engaged_prev) {
           controls_allowed = 1;
-          puts("  SCC w/o long control: controls allowed"); puts("\n");
+          print("  SCC w/o long control: controls allowed"); print("\n");
         }
         if (!cruise_engaged) {
-          if (controls_allowed) {puts("  SCC w/o long control: controls not allowed"); puts("\n");}
+          if (controls_allowed) {print("  SCC w/o long control: controls not allowed"); print("\n");}
           controls_allowed = 0;
         }
         cruise_engaged_prev = cruise_engaged;
@@ -131,10 +131,10 @@ static int hyundai_community_rx_hook(CANPacket_t *to_push) {
         int cruise_engaged = (GET_BYTES_04(to_push) >> 25 & 0x1); // ACC main_on signal
         if (cruise_engaged && !cruise_engaged_prev) {
           controls_allowed = 1;
-          puts("  non-SCC w/ long control: controls allowed"); puts("\n");
+          print("  non-SCC w/ long control: controls allowed"); print("\n");
         }
         if (!cruise_engaged) {
-          if (controls_allowed) {puts("  non-SCC w/ long control: controls not allowed"); puts("\n");}
+          if (controls_allowed) {print("  non-SCC w/ long control: controls not allowed"); print("\n");}
             controls_allowed = 0;
         }
         cruise_engaged_prev = cruise_engaged;
@@ -162,12 +162,12 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
 
   if (!msg_allowed(to_send, HYUNDAI_COMMUNITY_TX_MSGS, sizeof(HYUNDAI_COMMUNITY_TX_MSGS)/sizeof(HYUNDAI_COMMUNITY_TX_MSGS[0]))) {
     tx = 0;
-    puts("  CAN TX not allowed: "); puth(addr); puts(", "); puth(bus); puts("\n");
+    print("  CAN TX not allowed: "); puth(addr); print(", "); puth(bus); print("\n");
   }
 
   if (relay_malfunction) {
     tx = 0;
-    puts("  CAN TX not allowed LKAS on bus0"); puts("\n");
+    print("  CAN TX not allowed LKAS on bus0"); print("\n");
   }
 
   // LKA STEER: safety check
@@ -179,14 +179,14 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
       // *** global torque limit check ***
       bool torque_check = 0;
       violation |= torque_check = max_limit_check(desired_torque, HYUNDAI_MAX_STEER, -HYUNDAI_MAX_STEER);
-      if (torque_check) {puts("  LKAS TX not allowed: torque limit check failed!"); puts("\n");}
+      if (torque_check) {print("  LKAS TX not allowed: torque limit check failed!"); print("\n");}
 
       // *** torque rate limit check ***
       bool torque_rate_check = 0;
       violation |= torque_rate_check = driver_limit_check(desired_torque, desired_torque_last, &torque_driver,
         HYUNDAI_MAX_STEER, HYUNDAI_MAX_RATE_UP, HYUNDAI_MAX_RATE_DOWN,
         HYUNDAI_DRIVER_TORQUE_ALLOWANCE, HYUNDAI_DRIVER_TORQUE_FACTOR);
-      if (torque_rate_check) {puts("  LKAS TX not allowed: torque rate limit check failed!"); puts("\n");}
+      if (torque_rate_check) {print("  LKAS TX not allowed: torque rate limit check failed!"); print("\n");}
 
       // used next time
       desired_torque_last = desired_torque;
@@ -194,7 +194,7 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
       // *** torque real time rate limit check ***
       bool torque_rt_check = 0;
       violation |= torque_rt_check = rt_rate_limit_check(desired_torque, rt_torque_last, HYUNDAI_MAX_RT_DELTA);
-      if (torque_rt_check) {puts("  LKAS TX not allowed: torque real time rate limit check failed!"); puts("\n");}
+      if (torque_rt_check) {print("  LKAS TX not allowed: torque real time rate limit check failed!"); print("\n");}
 
       // every RT_INTERVAL set the new limits
       uint32_t ts_elapsed = get_ts_elapsed(ts, ts_last);
@@ -207,7 +207,7 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
     // no torque if controls is not allowed
     if (!controls_allowed && (desired_torque != 0)) {
       violation = 1;
-      puts("  LKAS torque not allowed: controls not allowed!"); puts("\n");
+      print("  LKAS torque not allowed: controls not allowed!"); print("\n");
     }
 
     // reset to 0 if either controls is not allowed or there's a violation
@@ -223,8 +223,8 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
     int mdps_state = (GET_BYTE(to_send, 0) & 0xF); // MDPS REPORTED STATE
     int raw_angle_can = ((GET_BYTE(to_send, 2) << 8) | GET_BYTE(to_send, 1));
     int desired_angle = to_signed(raw_angle_can, 16);
-    //puts("    Desired CAN Angle   "); puth(desired_angle); puts("\n");
-    //puts("    Steer Enabled   "); puth(steer_enabled); puts("\n");
+    //print("    Desired CAN Angle   "); puth(desired_angle); print("\n");
+    //print("    Steer Enabled   "); puth(steer_enabled); print("\n");
     // Rate limit check
     if (controls_allowed && mdps_state == 5) {
       float delta_angle_float;
@@ -239,11 +239,11 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
     desired_angle_last = desired_angle;
     if(!controls_allowed && (steer_enabled || mdps_state == 5)) {
       violation = 1;
-      puts("  SPAS angle send not allowed: controls not allowed!"); puts("\n");
+      print("  SPAS angle send not allowed: controls not allowed!"); print("\n");
     }
     if (ABS(driver_torque) > HYUNDAI_SPAS_OVERRIDE_TQ && mdps_state == 5) {
       //violation = 1; bugged 
-      puts("  Driver override torque reached  "); puts("\n");
+      print("  Driver override torque reached  "); print("\n");
     }
   }
 
@@ -251,7 +251,7 @@ static int hyundai_community_tx_hook(CANPacket_t *to_send) {
   if (addr == 2000) {
     if ((GET_BYTES_04(to_send) != 0x00803E02U) || (GET_BYTES_48(to_send) != 0x0U)) {
       tx = 0;
-      puts("     UDS     "); puts("\n");
+      print("     UDS     "); print("\n");
     }
   }
 
@@ -352,7 +352,7 @@ static const addr_checks* hyundai_community_init(int16_t param) {
 
   if (current_board->has_obd && HKG_forward_obd) {
     current_board->set_can_mode(CAN_MODE_OBD_CAN2);
-    puts("  MDPS or SCC on OBD2 CAN: setting can mode obd\n");
+    print("  MDPS or SCC on OBD2 CAN: setting can mode obd\n");
   }
   
   hyundai_community_rx_checks = (addr_checks){hyundai_community_addr_checks, HYUNDAI_COMMUNITY_ADDR_CHECK_LEN};
