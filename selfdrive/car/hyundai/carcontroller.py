@@ -156,7 +156,7 @@ class CarController:
 
     clu11_speed = CS.clu11["CF_Clu_Vanz"]
     enabled_speed = 38 if CS.clu11["CF_Clu_SPEED_UNIT"] == 1 else 60
-    if clu11_speed > enabled_speed or not lkas_active:
+    if clu11_speed > enabled_speed:
       enabled_speed = clu11_speed
 
     if not self.Options.get_bool("HKGNoLKAS"):
@@ -188,8 +188,8 @@ class CarController:
                                                 hud_control.leftLaneVisible, hud_control.rightLaneVisible,
                                                 left_lane_warning, right_lane_warning, 1))
 
-    if frame % 2 and CS.mdps_bus: # send clu11 to mdps if it is not on bus 0
-      can_sends.append(create_clu11(self.packer, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
+    if self.frame % 2 and CS.mdps_bus: # send clu11 to mdps if it is not on bus 0
+      can_sends.append(hyundaican.create_clu11(self.packer, self.frame, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
     
 
     # 20 Hz LFA MFA message

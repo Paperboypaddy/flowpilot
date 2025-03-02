@@ -1,4 +1,5 @@
 import crcmod
+import copy
 from selfdrive.car.hyundai.values import CAR, CHECKSUM, CAMERA_SCC_CAR
 
 hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
@@ -158,11 +159,11 @@ def create_lkas11_no_lkas_eq(packer, frame, car_fingerprint, apply_steer, steer_
   return packer.make_can_msg("LKAS11", 0, values)
 
 
-def create_clu11(packer, bus, clu11, button, speed):
+def create_clu11(packer, frame, bus, clu11, button, speed):
   values = copy.copy(clu11)
   values["CF_Clu_CruiseSwState"] = button
   values["CF_Clu_Vanz"] = speed
-  values["CF_Clu_AliveCnt1"] = (values["CF_Clu_AliveCnt1"] + 1) % 0x10
+  values["CF_Clu_AliveCnt1"] = frame
   return packer.make_can_msg("CLU11", bus, values)
 
 def create_mdps12(packer, frame, mdps12):
@@ -172,11 +173,11 @@ def create_mdps12(packer, frame, mdps12):
   values["CF_Mdps_MsgCount2"] = frame % 0x100
   values["CF_Mdps_Chksum2"] = 0
 
-  dat = packer.make_can_msg("MDPS12", 2, values)[2]
+  dat = packer.make_can_msg("MDPS12", 0, values)[2]
   checksum = sum(dat) % 256
   values["CF_Mdps_Chksum2"] = checksum
 
-  return packer.make_can_msg("MDPS12", 2, values)
+  return packer.make_can_msg("MDPS12", 0, values)
 
 def create_setspeed(packer, frame, clu11, speed, bus = 0):
   values = clu11
