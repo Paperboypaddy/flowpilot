@@ -190,7 +190,7 @@ const safety_hooks nooutput_hooks = {
 const uint16_t ALLOUTPUT_PARAM_PASSTHROUGH = 1;
 bool alloutput_passthrough = false;
 
-static const addr_checks* alloutput_init(uint16_t param) {
+static const addr_checks* alloutput_init(int16_t param) {
   UNUSED(param);
   alloutput_passthrough = GET_FLAG(param, ALLOUTPUT_PARAM_PASSTHROUGH);
   controls_allowed = true;
