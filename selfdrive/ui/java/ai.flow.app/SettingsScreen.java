@@ -143,6 +143,10 @@ public class SettingsScreen extends ScreenAdapter {
         }
     }
 
+    public void fillExtrasSettings(){
+        currentSettingTable.clear();
+    }
+
 
     public SettingsScreen(FlowUI appContext) {
         this.appContext = appContext;
@@ -233,6 +237,16 @@ public class SettingsScreen extends ScreenAdapter {
             }
         });
         settingTable.add(buttonVehicles).pad(10).align(Align.right);
+        settingTable.row();
+
+        buttonExtras = getPaddedButton("Extras", appContext.skin, "no-bg-bold", 5);
+        buttonExtras.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                
+            }
+        });
+        settingTable.add(buttonExtras).pad(10).align(Align.right);
         settingTable.row();
 
         buttonCalibrate = getPaddedButton("RESET", appContext.skin, 5);

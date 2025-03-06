@@ -12,14 +12,14 @@ import numpy as np
 
 from cereal import log, messaging
 from common.params import Params, put_nonblocking
-from laika import AstroDog
-from laika.constants import SECS_IN_HR, SECS_IN_MIN
-from laika.downloader import DownloadFailed
-from laika.ephemeris import EphemerisType, GPSEphemeris, GLONASSEphemeris, ephemeris_structs, parse_qcom_ephem
-from laika.gps_time import GPSTime
-from laika.helpers import ConstellationId, get_sv_id
-from laika.raw_gnss import GNSSMeasurement, correct_measurements, process_measurements, read_raw_ublox, read_raw_qcom
-from laika.opt import calc_pos_fix, get_posfix_sympy_fun, calc_vel_fix, get_velfix_sympy_func
+from laika_repo.laika import AstroDog
+from laika_repo.laika.constants import SECS_IN_HR, SECS_IN_MIN
+from laika_repo.laika.downloader import DownloadFailed
+from laika_repo.laika.ephemeris import EphemerisType, GPSEphemeris, GLONASSEphemeris, ephemeris_structs, parse_qcom_ephem
+from laika_repo.laika.gps_time import GPSTime
+from laika_repo.laika.helpers import ConstellationId, get_sv_id
+from laika_repo.laika.raw_gnss import GNSSMeasurement, correct_measurements, process_measurements, read_raw_ublox, read_raw_qcom
+from laika_repo.laika.opt import calc_pos_fix, get_posfix_sympy_fun, calc_vel_fix, get_velfix_sympy_func
 from selfdrive.locationd.models.constants import GENERATED_DIR, ObservationKind
 from selfdrive.locationd.models.gnss_kf import GNSSKalman
 from selfdrive.locationd.models.gnss_kf import States as GStates

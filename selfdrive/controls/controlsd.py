@@ -36,7 +36,7 @@ LANE_DEPARTURE_THRESHOLD = 0.1
 
 REPLAY = False #"REPLAY" in os.environ
 SIMULATION = False #"SIMULATION" in os.environ
-NOSENSOR = True #"NOSENSOR" in os.environ
+NOSENSOR = False #"NOSENSOR" in os.environ
 IGNORE_PROCESSES = {"loggerd", "logmessaged", "gradled", "uploader", "deleter", "proclogd"} # TODO
 
 ThermalStatus = log.DeviceState.ThermalStatus
@@ -85,7 +85,7 @@ class Controls:
       ignore = ['driverCameraState', 'testJoystick', 'driverMonitoringState', 'radarState'] if SIMULATION else ['driverCameraState', 'testJoystick', 'driverMonitoringState']
 
       if NOSENSOR:
-        ignore += ['liveParameters', 'liveTorqueParameters', 'liveLocationKalman']
+        ignore += ['liveParameters', 'liveLocationKalman']
 
       if self.params.get_bool('WideCameraOnly'):
         ignore += ['roadCameraState']
