@@ -116,7 +116,7 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.7
       ret.steerRatio = 13.73  # Spec
       tire_stiffness_factor = 0.385
-      if candidate in (CAR.IONIQ, CAR.IONIQ_EV_LTD, CAR.IONIQ_PHEV_2019):
+      if candidate in (CAR.IONIQ_EV_LTD, CAR.IONIQ_PHEV_2019):
         ret.minSteerSpeed = 32 * CV.MPH_TO_MS
     elif candidate == CAR.VELOSTER:
       ret.mass = 3558. * CV.LB_TO_KG
@@ -252,8 +252,8 @@ class CarInterface(CarInterfaceBase):
     ret.openpilotLongitudinalControl = False #experimental_long and ret.experimentalLongitudinalAvailable
     ret.pcmCruise = not ret.openpilotLongitudinalControl
 
-    ret.stoppingControl = True
-    ret.startingState = True
+    ret.stoppingControl = False
+    ret.startingState = False
     ret.vEgoStarting = 0.1
     ret.startAccel = 1.0
     ret.longitudinalActuatorDelayLowerBound = 0.5
@@ -264,6 +264,10 @@ class CarInterface(CarInterfaceBase):
       ret.enableBsm = 0x1e5 in fingerprint[CAN.ECAN]
     else:
       ret.enableBsm = 0x58b in fingerprint[0]
+
+    ret.mdpsBus = 2 if 593 in fingerprint[2] else 0
+    ret.sasBus = 2 if 688 in fingerprint[2] else 0
+
 
     # *** panda safety config ***
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity, 0)]
@@ -314,9 +318,9 @@ class CarInterface(CarInterfaceBase):
     events = self.create_common_events(ret)
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
-    if ret.vEgo < (self.CP.minSteerSpeed + 2.) and self.CP.minSteerSpeed > 10.:
+    if ret.vEgo < (self.CP.minSteerSpeed) and self.CP.minSteerSpeed > 10.:
       self.low_speed_alert = True
-    if ret.vEgo > (self.CP.minSteerSpeed + 4.):
+    if ret.vEgo > (self.CP.minSteerSpeed):
       self.low_speed_alert = False
     if self.low_speed_alert:
       events.add(car.CarEvent.EventName.belowSteerSpeed)

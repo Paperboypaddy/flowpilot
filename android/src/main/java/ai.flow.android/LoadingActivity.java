@@ -105,9 +105,8 @@ public class LoadingActivity extends AppCompatActivity {
                     i++;
                 }
 
-                // Hack to clean out Params
-                ServiceFlowreset.prepare(getApplication().getApplicationContext());
-                ServiceFlowreset.start(getApplication().getApplicationContext(), "");
+                // boot all the flowpilot daemons in non-java land.
+//                bootTermux();
 
                 // These can run all the time
                 ServiceKeyvald.prepare(getApplication().getApplicationContext());
