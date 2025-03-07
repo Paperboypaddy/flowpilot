@@ -3,7 +3,7 @@
 import os
 import argparse
 import threading
-from inputs import get_gamepad
+from evdev import InputDevice, categorize, ecodes
 
 import cereal.messaging as messaging
 from common.realtime import Ratekeeper
@@ -40,44 +40,44 @@ class Keyboard:
 
 
 class Joystick:
-  def __init__(self, gamepad=False):
-    # TODO: find a way to get this from API, perhaps "inputs" doesn't support it
-    if gamepad:
-      self.cancel_button = 'BTN_NORTH'  # (BTN_NORTH=X, ABS_RZ=Right Trigger)
-      self.set_button = 'BTN_SOUTH'
-      accel_axis = 'ABS_Y'
-      steer_axis = 'ABS_RX'
-    else:
-      self.cancel_button = 'BTN_TRIGGER'
-      accel_axis = 'ABS_Y'
-      steer_axis = 'ABS_RZ'
-    self.min_axis_value = {accel_axis: 0., steer_axis: 0.}
-    self.max_axis_value = {accel_axis: 255., steer_axis: 255.}
-    self.axes_values = {accel_axis: 0., steer_axis: 0.}
-    self.axes_order = [accel_axis, steer_axis]
-    self.cancel = False
-    self.set = False
-
-  def update(self):
-    joystick_event = get_gamepad()[0]
-    event = (joystick_event.code, joystick_event.state)
-    if event[0] == self.cancel_button:
-      if event[1] == 1:
-        self.cancel = True
-      elif event[1] == 0:   # state 0 is falling edge
+    def __init__(self, device_path="/dev/input/event13"):
+        self.device = InputDevice(device_path)
+        self.cancel_button = 'BTN_NORTH'
+        self.set_button = 'BTN_SOUTH'
+        
+        # Define axes for steering and acceleration
+        accel_axis = 'ABS_Y'
+        steer_axis = 'ABS_Z'
+        
+        self.min_axis_value = {accel_axis: 0., steer_axis: 0.}
+        self.max_axis_value = {accel_axis: 255., steer_axis: 255.}
+        self.axes_values = {accel_axis: 0., steer_axis: 0.}
+        self.axes_order = [accel_axis, steer_axis]
         self.cancel = False
-    elif event[0] == self.set_button:
-      if event[1] == 1:
-        self.set = not self.set
-    elif event[0] in self.axes_values:
-      self.max_axis_value[event[0]] = max(event[1], self.max_axis_value[event[0]])
-      self.min_axis_value[event[0]] = min(event[1], self.min_axis_value[event[0]])
+        self.set = False
 
-      norm = -interp(event[1], [self.min_axis_value[event[0]], self.max_axis_value[event[0]]], [-1., 1.])
-      self.axes_values[event[0]] = norm if abs(norm) > 0.05 else 0.  # center can be noisy, deadzone of 5%
-    else:
-      return False
-    return True
+    def update(self):
+        for event in self.device.read_loop():  # Use read_loop instead of read
+            if event.type == ecodes.EV_ABS:  # Handle axis events
+                axis = ecodes.ABS[event.code]
+                
+                if axis == 'ABS_Y':
+                    # Normalize the value between -1 and 1
+                    norm = -interp(event.value, [self.min_axis_value[axis], self.max_axis_value[axis]], [-1., 1.])
+                    self.axes_values[axis] = norm if abs(norm) > 0.05 else 0.  # Apply deadzone
+                elif axis == 'ABS_Z':
+                    # Normalize the value between -1 and 1
+                    norm = -interp(event.value, [self.min_axis_value[axis], self.max_axis_value[axis]], [-1., 1.])
+                    self.axes_values[axis] = norm if abs(norm) > 0.05 else 0.  # Apply deadzone
+
+            # Check for button press/release events
+            if event.type == ecodes.EV_KEY:
+                if event.code == self.cancel_button and event.value == 1:
+                    self.cancel = True
+                elif event.code == self.set_button and event.value == 1:
+                    self.set = not self.set
+        return True
+
 
 
 def send_thread(joystick):
@@ -122,5 +122,5 @@ if __name__ == '__main__':
   else:
     print('Using joystick.')
 
-  joystick = Keyboard() if args.keyboard else Joystick(args.gamepad)
+  joystick = Keyboard() if args.keyboard else Joystick("/dev/input/event13")
   joystick_thread(joystick)
