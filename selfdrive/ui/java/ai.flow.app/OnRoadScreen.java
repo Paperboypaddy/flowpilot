@@ -122,7 +122,7 @@ public class OnRoadScreen extends ScreenAdapter {
     public static int CamExposure, currentExposureIndex = 0;
 
     Label velocityLabel, velocityUnitLabel, alertText1, alertText2, maxCruiseSpeedLabel, dateLabel, vesrionLabel;
-    Table velocityTable, maxCruiseTable, alertTable, infoTable, offRoadTable, rootTable, offRoadRootTable;
+    Table velocityTable, maxCruiseTable, alertTable, infoTable, offRoadTable, rootTable, offRoadRootTable, steerAngleTable;
     Stack statusLabelTemp, statusLabelCan, statusLabelOnline, maxCruise;
     ScrollPane notificationScrollPane;
     ImageButton settingsButton;
@@ -364,6 +364,11 @@ public class OnRoadScreen extends ScreenAdapter {
         maxCruiseTable.align(Align.topLeft);
         maxCruiseTable.padTop(100);
 
+        steerAngleTable = new Table();
+        steerAngleTable.setFillParent(true);
+        steerAngleTable.align(Align.topRight);
+        steerAngleTable.padTop(20);
+
         alertTable = new Table();
         alertTable.setFillParent(true);
         alertTable.align(Align.bottom);
@@ -416,6 +421,15 @@ public class OnRoadScreen extends ScreenAdapter {
         velocityUnitLabel.setColor(0.5f, 1f, 0.5f, 1f);
         isMetric = params.existsAndCompare("IsMetric", true);
 
+        steerAngleLabel = new Label("Steer Angle", appContext.skin, "default-font", "white");
+        steerAngleLabel.setColor(0.8f, 0.8f, 0.8f, 1f);
+        steerAngle = new Label("", appContext.skin, "default-font", "white")
+        steerAngle.setColor(0.8f, 0.8f, 0.8f, 1f);
+
+        steerAngleTable.add(steerAngle).align(Align.topRight).padRight(30);
+        steerAngleTable.row()
+        steerAngleTable.add(steeringAngleLabel).fillY()align(Align.topRight).padRight(30);
+
         alertText1 = new Label("Flowpilot Unavailable", appContext.skin, "default-font-bold-med", "white");
         alertText2 = new Label("Waiting for controls to start", appContext.skin, "default-font", "white");
 
@@ -460,6 +474,7 @@ public class OnRoadScreen extends ScreenAdapter {
 
         stageFill.addActor(texImage);
         stageUI.addActor(velocityTable);
+        stageUI.addActor(steerAngleTable);
         stageUI.addActor(maxCruiseTable);
         stageUI.addActor(alertTable);
         stageSettings.addActor(rootTable);
@@ -556,8 +571,10 @@ public class OnRoadScreen extends ScreenAdapter {
     public void updateCarState() {
         Definitions.Event.Reader event = sh.recv(carStateTopic);
         LatestvEgo = event.getCarState().getVEgo();
+        LatestSasAngle = event.getcarState().getSteeringAngleDeg();
         float vel = isMetric ? LatestvEgo * 3.6f : LatestvEgo * 2.237f;
         velocityLabel.setText(Integer.toString((int)vel));
+        steerAngle.setText(Float.toString(LatestSasAngle));
     }
 
     public void updateControls() {
@@ -593,7 +610,7 @@ public class OnRoadScreen extends ScreenAdapter {
                 parsed.roadEdges.get(0).get(0)[i] = Math.max(parsed.roadEdges.get(0).get(0)[i], minZ);
                 parsed.roadEdges.get(1).get(0)[i] = Math.max(parsed.roadEdges.get(1).get(0)[i], minZ);
             }
-            path = Draw.getLaneCameraFrame(parsed.position, Camera.cam_intrinsics, RtPath, 0.9f);
+            path = Draw.getLaneCameraFrame(parsed.position, Camera.cam_intrinsics, RtPath, 2f)
             lane0 = Draw.getLaneCameraFrame(parsed.laneLines.get(0), Camera.cam_intrinsics, Rt, 0.07f);
             lane1 = Draw.getLaneCameraFrame(parsed.laneLines.get(1), Camera.cam_intrinsics, Rt, 0.05f);
             lane2 = Draw.getLaneCameraFrame(parsed.laneLines.get(2), Camera.cam_intrinsics, Rt, 0.05f);

@@ -34,11 +34,11 @@ procs = [
   #ManagerProcess("loggerd", "./selfdrive/loggerd/loggerd", enabled=True, onroad=False, callback=logging),
   #ManagerProcess("uploader", "uploader", enabled=is_android(), offroad=True),
   #ManagerProcess("deleter", "deleter", enabled=True, offroad=True),
-  ManagerProcess("ubloxd", "./selfdrive/locationd/ubloxd", enabled=True),
-  ManagerProcess("laikad", "laikad", enabled=True),
-  ManagerProcess("paramsd", "paramsd", enabled=True),
-  ManagerProcess("torqued", "torqued", enabled=True),
-  ManagerProcess("locationd", "./selfdrive/locationd/locationd", enabled=True),
+  ManagerProcess("ubloxd", "./selfdrive/locationd/ubloxd", onroad=False),
+  ManagerProcess("laikad", "laikad", enabled=False),
+  #ManagerProcess("paramsd", "paramsd", enabled=False),
+  ManagerProcess("torqued", "torqued", enabled=False),
+  #ManagerProcess("locationd", "./selfdrive/locationd/locationd", enabled=False),
 ]
 
 platform = "android" if is_android() else "desktop" 
