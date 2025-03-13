@@ -121,17 +121,17 @@ public class SettingsScreen extends ScreenAdapter {
         for (int i=0; i<ToggleButtons.size(); i++) {
             addKeyValueTable(currentSettingTable, AdditionalToggles.get(i*2), ToggleButtons.get(i), true);
         }
-        txfDegOffset = new TextField(String.valueOf(steeringOffset), appContext.skin);
-        txfDegOffset.setMessageText(" 0+");
-        addKeyValueTable(currentSettingTable, "Steering Offset", txfDegOffset, true);
-        txfDegOffset.addListener(
-                new InputListener() {
-                    @Override
-                    public void input(InputEvent event) {
-
-                    }
-                }
-        );
+//        txfDegOffset = new TextField(String.valueOf(steeringOffset), appContext.skin);
+//        txfDegOffset.setMessageText(" 0+");
+//        addKeyValueTable(currentSettingTable, "Steering Offset", txfDegOffset, true);
+//        txfDegOffset.addListener(
+//                new InputListener() {
+//                    @Override
+//                    public void input(InputEvent event) {
+//
+//                    }
+//                }
+//        );
     }
 
     public void fillVehiclesSettings(){
@@ -164,6 +164,8 @@ public class SettingsScreen extends ScreenAdapter {
         AdditionalToggles.add("CruiseSpamming");
         AdditionalToggles.add("HKG LKAS Not Equipped");
         AdditionalToggles.add("HKGNoLKAS");
+        AdditionalToggles.add("HKG Spas Enabled");
+        AdditionalToggles.add("SpasRspaEnabled");
 
         stage = new Stage(new FitViewport(1280, 720));
         batch = new SpriteBatch();

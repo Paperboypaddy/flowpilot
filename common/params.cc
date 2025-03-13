@@ -105,6 +105,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CruiseSpamming", PERSISTENT},
     {"HKGNoLKAS", PERSISTENT},
     {"Nudgeless", PERSISTENT},
+    {"SpasRspaEnabled", PERSISTENT},
 };
 
 lmdb::env Params::env = nullptr;

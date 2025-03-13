@@ -316,9 +316,11 @@ class CarState(CarStateBase):
         ("CF_Mdps_ToiUnavail", "MDPS12"),
         ("CF_Mdps_ToiFlt", "MDPS12"),
         ("CR_Mdps_OutTq", "MDPS12"),
+        ("CR_Mdps_DrvTq", "MDPS11", 0),
       ]
       checks += [
         ("MDPS12", 50),
+        ("MDPS11", 100),
       ]
     if CP.sasBus == 0:
       signals += [

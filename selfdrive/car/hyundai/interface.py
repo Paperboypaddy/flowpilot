@@ -268,6 +268,8 @@ class CarInterface(CarInterfaceBase):
     ret.mdpsBus = 2 if 593 in fingerprint[2] else 0
     ret.sasBus = 2 if 688 in fingerprint[2] else 0
 
+    ret.spasEnabled = Params().get_bool('SpasRspaEnabled')
+
 
     # *** panda safety config ***
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity, 0)]
